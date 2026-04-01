@@ -31,10 +31,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Delete any existing unused OTPs for this email
-    await OTP.deleteMany({ email, type: "password-reset", used: false });
-
-    // Rate limiting: check recent OTPs (max 3 per hour)
+    // ✅ Rate limiting: count BEFORE deleting
     const recentCount = await OTP.countDocuments({
       email,
       type: "password-reset",
@@ -47,6 +44,9 @@ export async function POST(req: NextRequest) {
         { status: 429 }
       );
     }
+
+    // ✅ Delete AFTER counting
+    await OTP.deleteMany({ email, type: "password-reset", used: false });
 
     const rawOTP = generateOTP(6);
     const hashedOTP = await bcrypt.hash(rawOTP, 10);

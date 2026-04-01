@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import Google from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import { connectDB } from "@/lib/db";
 import User from "@/models/User";
@@ -7,6 +8,10 @@ import { loginSchema } from "@/lib/validations";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
     Credentials({
       name: "credentials",
       credentials: {
@@ -18,11 +23,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!parsed.success) return null;
 
         const { email, password } = parsed.data;
-
         await connectDB();
 
         const user = await User.findOne({ email }).select("+password");
-        if (!user) return null;
+        if (!user || !user.password) return null;
 
         const isValid = await bcrypt.compare(password, user.password);
         if (!isValid) return null;
@@ -37,9 +41,40 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
+    async signIn({ user, account }) {
+      if (account?.provider === "google") {
+        try {
+          await connectDB();
+          const existing = await User.findOne({ email: user.email });
+
+          if (!existing) {
+            await User.create({
+              name: user.name,
+              email: user.email,
+              image: user.image,
+              googleId: account.providerAccountId,
+            });
+          } else if (!existing.googleId) {
+            await User.updateOne(
+              { email: user.email },
+              { googleId: account.providerAccountId, image: user.image }
+            );
+          }
+          return true;
+        } catch (error) {
+          console.error("[GOOGLE_SIGNIN]", error);
+          return false;
+        }
+      }
+      return true;
+    },
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
+        await connectDB();
+        const dbUser = await User.findOne({ email: user.email });
+        if (dbUser) {
+          token.id = dbUser._id.toString();
+        }
       }
       return token;
     },
@@ -56,7 +91,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 30 * 24 * 60 * 60,
   },
   secret: process.env.NEXTAUTH_SECRET,
   trustHost: true,

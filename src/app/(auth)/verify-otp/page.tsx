@@ -41,8 +41,10 @@ export default function VerifyOTPPage() {
 
   useEffect(() => {
     startCooldown();
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleVerify = async () => {
@@ -90,13 +92,13 @@ export default function VerifyOTPPage() {
     startCooldown();
   };
 
-  // Auto-submit when all digits entered
+  // ✅ Auto-submit guard: skip if still resending
   useEffect(() => {
-    if (otp.length === 6 && !loading) {
+    if (otp.length === 6 && !loading && !resending) {
       handleVerify();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [otp]);
+  }, [otp, resending]);
 
   const maskedEmail = email.replace(/(.{2})(.*)(@.*)/, (_, a, b, c) =>
     a + "*".repeat(Math.max(0, b.length)) + c
@@ -139,7 +141,8 @@ export default function VerifyOTPPage() {
             Didn&apos;t receive the code?{" "}
             {cooldown > 0 ? (
               <span className="text-surface-600">
-                Resend in <span className="font-mono text-surface-400">{cooldown}s</span>
+                Resend in{" "}
+                <span className="font-mono text-surface-400">{cooldown}s</span>
               </span>
             ) : (
               <button
