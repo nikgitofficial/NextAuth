@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
+import Image from "next/image";
 import {
   LayoutDashboard,
   User,
@@ -79,7 +80,6 @@ function NavItem({
       `}
       title={collapsed ? label : undefined}
     >
-      {/* Active indicator bar */}
       {active && (
         <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-full bg-brand-400" />
       )}
@@ -102,7 +102,6 @@ function NavItem({
         </>
       )}
 
-      {/* Tooltip when collapsed */}
       {collapsed && (
         <span
           className="
@@ -151,20 +150,22 @@ export function Sidebar({
       {/* ── Logo ── */}
       <div className="flex items-center justify-between h-14 px-4 border-b border-surface-800/60 flex-shrink-0">
         <div className="flex items-center gap-2.5 overflow-hidden">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center flex-shrink-0 shadow-brand">
-            <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
-              <path
-                d="M8 1L14 4V12L8 15L2 12V4L8 1Z"
-                stroke="white"
-                strokeWidth="1.5"
-                strokeLinejoin="round"
-              />
-              <path d="M8 6a2 2 0 100 4 2 2 0 000-4z" fill="white" fillOpacity="0.9" />
-            </svg>
+
+          {/* ── Logo icon (shown always, even when collapsed) ── */}
+          <div className="flex-shrink-0 w-7 h-7 relative">
+            <Image
+              src="/logo.png"          // ← change to your file: /logo.svg, /logo.webp, etc.
+              alt="Logo"
+              fill
+              className="object-contain"
+              priority
+            />
           </div>
+
+          {/* ── App name (hidden when collapsed) ── */}
           {!collapsed && (
             <span className="text-white font-semibold text-sm tracking-tight whitespace-nowrap">
-              AuthSystem
+              AuthSystem          {/* ← change to your app name */}
             </span>
           )}
         </div>
@@ -226,7 +227,6 @@ export function Sidebar({
             collapsed ? "justify-center" : ""
           }`}
         >
-          {/* Avatar — now uses UserAvatar */}
           <UserAvatar
             image={user?.image}
             name={user?.name}

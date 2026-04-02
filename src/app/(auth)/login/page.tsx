@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
+import Image from "next/image";
 import { Mail, Lock, ArrowRight } from "lucide-react";
 import { loginSchema, type LoginInput } from "@/lib/validations";
 import { AuthCard, AuthCardHeader } from "@/components/ui/AuthCard";
@@ -73,6 +74,22 @@ export default function LoginPage() {
 
   return (
     <AuthCard>
+      {/* ── Logo + app name (mirrors the sidebar header) ── */}
+      <div className="flex items-center justify-center gap-2.5 mb-6">
+        <div className="flex-shrink-0 w-7 h-7 relative">
+          <Image
+            src="/logo.png"   // ← same path as sidebar
+            alt="Logo"
+            fill
+            className="object-contain"
+            priority
+          />
+        </div>
+        <span className="text-white font-semibold text-sm tracking-tight">
+          AuthSystem          {/* ← same app name as sidebar */}
+        </span>
+      </div>
+
       <AuthCardHeader
         icon={<Lock size={20} />}
         title="Welcome back"

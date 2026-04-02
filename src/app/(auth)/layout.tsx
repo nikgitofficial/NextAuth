@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
@@ -56,26 +57,14 @@ export default async function AuthLayout({
           href="/"
           className="flex items-center gap-2.5 group transition-opacity hover:opacity-80"
         >
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shadow-brand">
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M8 1L14 4V12L8 15L2 12V4L8 1Z"
-                stroke="white"
-                strokeWidth="1.5"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M8 6a2 2 0 100 4 2 2 0 000-4z"
-                fill="white"
-                fillOpacity="0.9"
-              />
-            </svg>
+          <div className="flex-shrink-0 w-8 h-8 relative">
+            <Image
+              src="/logo.png"
+              alt="Logo"
+              fill
+              className="object-contain"
+              priority
+            />
           </div>
           <span className="text-white font-semibold text-base tracking-tight">
             AuthSystem
