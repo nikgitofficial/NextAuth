@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Shield, Mail, Calendar } from "lucide-react";
+import { UserAvatar } from "@/components/ui/UserAvatar";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -13,12 +14,7 @@ export default async function DashboardPage() {
     day: "numeric",
   });
 
-  const initials = user?.name
-    ?.split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2) ?? "??";
+  
 
   return (
     <div className="min-h-dvh bg-surface-950 relative overflow-hidden">
@@ -59,9 +55,7 @@ export default async function DashboardPage() {
           {/* Profile card */}
           <div className="md:col-span-2 bg-surface-900/80 border border-surface-800 rounded-2xl p-6">
             <div className="flex items-start gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white font-bold text-lg flex-shrink-0 shadow-brand">
-                {initials}
-              </div>
+              <UserAvatar image={user?.image} name={user?.name} size="lg" />
               <div className="flex-1 min-w-0">
                 <h2 className="text-white font-semibold text-base truncate">{user?.name}</h2>
                 <p className="text-surface-500 text-sm truncate">{user?.email}</p>

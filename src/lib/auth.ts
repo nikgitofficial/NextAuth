@@ -68,19 +68,41 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       return true;
     },
-    async jwt({ token, user }) {
+
+    async jwt({ token, user, trigger, session }) {
+      // On initial sign-in, make sure email is seeded into token
       if (user) {
+        token.email = user.email;
+      }
+
+      // Always re-fetch from DB so image/name are always fresh
+      if (token.email) {
         await connectDB();
-        const dbUser = await User.findOne({ email: user.email });
+        const dbUser = await User.findOne({ email: token.email }).lean() as {
+          _id: { toString(): string };
+          image?: string;
+          name?: string;
+        } | null;
         if (dbUser) {
           token.id = dbUser._id.toString();
+          token.picture = dbUser.image ?? null;
+          token.name = dbUser.name ?? token.name;
         }
       }
+
+      // Handle manual update() calls from client
+      if (trigger === "update" && session?.image !== undefined) {
+        token.picture = session.image;
+      }
+
       return token;
     },
+
     async session({ session, token }) {
       if (token && session.user) {
         session.user.id = token.id as string;
+        session.user.image = (token.picture as string) ?? null;
+        session.user.name = token.name as string;
       }
       return session;
     },

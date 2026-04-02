@@ -18,6 +18,7 @@ import {
   Menu,
   X,
 } from "lucide-react";
+import { UserAvatar } from "@/components/ui/UserAvatar";
 
 /* ─────────────────────────────────────────────
    Nav data
@@ -131,20 +132,12 @@ export function Sidebar({
   user,
   onSignOut,
 }: {
-  user?: { name?: string | null; email?: string | null };
+  user?: { name?: string | null; email?: string | null; image?: string | null };
   onSignOut?: () => void;
 }) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  const initials =
-    user?.name
-      ?.split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2) ?? "??";
 
   const sidebarContent = (
     <div
@@ -233,10 +226,12 @@ export function Sidebar({
             collapsed ? "justify-center" : ""
           }`}
         >
-          {/* Avatar */}
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white text-xs font-bold flex-shrink-0 shadow-brand">
-            {initials}
-          </div>
+          {/* Avatar — now uses UserAvatar */}
+          <UserAvatar
+            image={user?.image}
+            name={user?.name}
+            size="md"
+          />
 
           {!collapsed && (
             <>
@@ -250,13 +245,13 @@ export function Sidebar({
               </div>
 
               <button
-  onClick={() => signOut({ callbackUrl: "/login" })}  // ← change this line
-  className="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-surface-600 hover:text-red-400 hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100"
-  aria-label="Sign out"
-  title="Sign out"
->
-  <LogOut size={13} />
-</button>
+                onClick={() => signOut({ callbackUrl: "/login" })}
+                className="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-surface-600 hover:text-red-400 hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100"
+                aria-label="Sign out"
+                title="Sign out"
+              >
+                <LogOut size={13} />
+              </button>
             </>
           )}
         </div>

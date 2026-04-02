@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Bell, Search, HelpCircle, ChevronRight, LogOut, User, Settings } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
+import { UserAvatar } from "@/components/ui/UserAvatar";
 
 /* ─────────────────────────────────────────────
    Page meta
@@ -27,7 +28,7 @@ export function Topbar({
   user,
   notificationCount = 3,
 }: {
-  user?: { name?: string | null; email?: string | null };
+  user?: { name?: string | null; email?: string | null; image?: string | null };
   notificationCount?: number;
 }) {
   const pathname = usePathname();
@@ -35,14 +36,6 @@ export function Topbar({
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  const initials =
-    user?.name
-      ?.split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2) ?? "??";
 
   /* Close dropdown on outside click */
   useEffect(() => {
@@ -116,10 +109,13 @@ export function Topbar({
               }
             `}
           >
-            {/* Avatar */}
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white text-[11px] font-bold flex-shrink-0 shadow-brand">
-              {initials}
-            </div>
+            {/* Avatar — now uses UserAvatar */}
+            <UserAvatar
+              image={user?.image}
+              name={user?.name}
+              size="sm"
+            />
+
             {/* Name — visible on lg+ */}
             <div className="hidden lg:block text-left">
               <p className="text-xs font-medium text-surface-300 leading-tight truncate max-w-[100px]">
@@ -129,6 +125,7 @@ export function Topbar({
                 {user?.email ?? ""}
               </p>
             </div>
+
             {/* Caret */}
             <ChevronRight
               size={12}
@@ -140,10 +137,17 @@ export function Topbar({
           {/* Dropdown panel */}
           {dropdownOpen && (
             <div className="absolute right-0 top-full mt-2 w-56 rounded-2xl bg-surface-900 border border-surface-800 shadow-xl shadow-black/40 overflow-hidden z-50">
-              {/* User info header */}
-              <div className="px-4 py-3 border-b border-surface-800">
-                <p className="text-sm font-semibold text-white truncate">{user?.name ?? "User"}</p>
-                <p className="text-xs text-surface-500 truncate mt-0.5">{user?.email ?? ""}</p>
+              {/* User info header — also shows avatar */}
+              <div className="px-4 py-3 border-b border-surface-800 flex items-center gap-3">
+                <UserAvatar
+                  image={user?.image}
+                  name={user?.name}
+                  size="md"
+                />
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-white truncate">{user?.name ?? "User"}</p>
+                  <p className="text-xs text-surface-500 truncate mt-0.5">{user?.email ?? ""}</p>
+                </div>
               </div>
 
               {/* Menu items */}
