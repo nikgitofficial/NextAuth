@@ -5,7 +5,7 @@ import { auth } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: {
-    default: "AuthSystem — Secure Authentication",
+    default: "AuthSystem || ni nickpacs",
     template: "%s | AuthSystem",
   },
   description:
