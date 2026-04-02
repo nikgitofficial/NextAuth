@@ -1,7 +1,6 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { SignOutButton } from "@/components/SignOutButton";
-import { Shield, User, Mail, Calendar, LogOut } from "lucide-react";
+import { Shield, Mail, Calendar } from "lucide-react";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -41,21 +40,7 @@ export default async function DashboardPage() {
         />
       </div>
 
-      {/* Nav */}
-      <header className="relative z-10 border-b border-surface-800/60 bg-surface-950/80 backdrop-blur-xl">
-        <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center">
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
-                <path d="M8 1L14 4V12L8 15L2 12V4L8 1Z" stroke="white" strokeWidth="1.5" strokeLinejoin="round" />
-                <path d="M8 6a2 2 0 100 4 2 2 0 000-4z" fill="white" fillOpacity="0.9" />
-              </svg>
-            </div>
-            <span className="text-white font-semibold text-sm tracking-tight">AuthSystem</span>
-          </div>
-          <SignOutButton />
-        </div>
-      </header>
+      
 
       {/* Main */}
       <main className="relative z-10 max-w-5xl mx-auto px-6 py-12">
